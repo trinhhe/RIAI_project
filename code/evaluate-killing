@@ -1,0 +1,19 @@
+#!/bin/bash
+
+timelimit=1m
+
+for net in fc1 fc2 fc3 fc4 fc5
+do
+	for k in 0 1;
+	do
+		echo Evaluating network net${k}_${net}
+		for spec in `ls ../test_cases/net${k}_${net}`
+		do
+			timeout $timelimit python verifier.py --net net${k}_${net} --spec ../test_cases/net${k}_${net}/${spec} "$@"
+			code=$?
+			if [ $code -eq 124 ]; then
+				echo "not verified (killed)"
+			fi
+		done
+	done
+done
